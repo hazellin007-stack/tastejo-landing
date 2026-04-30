@@ -427,49 +427,17 @@ footer a{color:var(--muted);text-decoration:none;}
   font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(255,255,255,.4);
 }
-.video-thumb-link{
-  display:block;width:100%;position:relative;
-  border-radius:var(--r-md);overflow:hidden;
+.video-frame-wrap{
+  width:100%;position:relative;
+  padding-bottom:56.25%;
+  height:0;overflow:hidden;
+  border-radius:var(--r-md);
   box-shadow:0 24px 64px rgba(0,0,0,.5);
-  text-decoration:none;
-  transition:transform .25s,box-shadow .25s;
 }
-.video-thumb-link:hover{
-  transform:translateY(-3px);
-  box-shadow:0 32px 72px rgba(0,0,0,.65);
-}
-.video-thumb-img{
-  width:100%;display:block;
-  aspect-ratio:16/9;object-fit:cover;
-}
-.video-play-btn{
-  position:absolute;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:64px;height:64px;border-radius:50%;
-  background:rgba(26,158,114,.9);
-  display:flex;align-items:center;justify-content:center;
-  transition:transform .2s,background .2s;
-  backdrop-filter:blur(4px);
-}
-.video-thumb-link:hover .video-play-btn{
-  transform:translate(-50%,-50%) scale(1.12);
-  background:var(--green);
-}
-.video-thumb-label{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:20px 20px 16px;
-  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 100%);
-  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
-}
-.video-thumb-label span:first-child{
-  font-size:.88rem;color:#fff;font-weight:600;line-height:1.4;
-}
-.video-yt-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  background:rgba(255,255,255,.15);color:rgba(255,255,255,.8) !important;
-  font-size:.72rem !important;font-weight:500 !important;
-  padding:5px 10px;border-radius:12px;white-space:nowrap;
-  backdrop-filter:blur(4px);
+.video-frame-wrap iframe{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  border-radius:var(--r-md);
 }
 
 /* ─── COLLAB STRIP ─── */
@@ -596,21 +564,15 @@ footer a{color:var(--muted);text-decoration:none;}
 <div class="video-section fi">
   <div class="video-inner">
     <div class="video-label">看看 TasteJo 如何運作</div>
-    <a class="video-thumb-link" href="https://youtu.be/BTznSIKe15k" target="_blank" rel="noopener">
-      <img
-        src="https://img.youtube.com/vi/BTznSIKe15k/maxresdefault.jpg"
-        alt="TasteJo｜重寫風味世界的共識機制"
-        class="video-thumb-img"
-        onerror="this.src='https://img.youtube.com/vi/BTznSIKe15k/hqdefault.jpg'"
-      >
-      <div class="video-play-btn">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="video-thumb-label">
-        <span>TasteJo｜重寫風味世界的共識機制</span>
-        <span class="video-yt-badge">在 YouTube 觀看</span>
-      </div>
-    </a>
+    <div class="video-frame-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/BTznSIKe15k?rel=0&modestbranding=1&color=white"
+        title="TasteJo｜重寫風味世界的共識機制"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
   </div>
 </div>
 

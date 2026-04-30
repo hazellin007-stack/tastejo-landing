@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TasteJo｜品味即對話，茶藝即陪伴</title>
+<style>
+:root {
+  --green:       #1a9e72;
+  --green-dk:    #0f6e4f;
+  --green-mid:   #b2dfd0;
+  --green-lt:    #e8f7f2;
+  --green-pale:  #f2fbf7;
+  --bg:          #f7f5f0;
+  --card:        #ffffff;
+  --text:        #1a1a1a;
+  --text-2:      #3a3a3a;
+  --muted:       #6b6b6b;
+  --border:      #e4e1dc;
+  --shadow-sm:   0 2px 12px rgba(0,0,0,0.06);
+  --shadow-md:   0 8px 32px rgba(0,0,0,0.09);
+  --shadow-green:0 6px 24px rgba(26,158,114,0.22);
+  --r-sm: 16px;
+  --r-md: 24px;
+  --r-lg: 32px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,'PingFang TC','Helvetica Neue','Noto Sans TC',sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;width:100%;z-index:200;
+  background:rgba(247,245,240,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(228,225,220,0.6);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:58px;
+}
+.nav-logo{
+  font-size:1.1rem;font-weight:800;color:var(--text);
+  display:flex;align-items:center;gap:10px;letter-spacing:-.01em;
+}
+.nav-logo svg{ display:block; flex-shrink:0; }
+.nav-links{display:flex;gap:24px;list-style:none;}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-size:.86rem;font-weight:500;
+  transition:color .2s;letter-spacing:.01em;
+}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{
+  background:var(--green);color:#fff;
+  padding:7px 18px;border-radius:20px;font-size:.86rem;font-weight:600;
+  text-decoration:none;transition:opacity .2s;letter-spacing:.02em;
+}
+.nav-cta:hover{opacity:.85;}
+
+/* ─── HERO MANIFESTO ─── */
+.hero-manifesto{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:110px 24px 72px;text-align:center;
+  position:relative;overflow:hidden;gap:40px;
+}
+.manifesto-question{
+  font-size:clamp(2.2rem,6vw,4rem);
+  font-weight:900;line-height:1.18;letter-spacing:-.03em;
+  color:var(--text);
+}
+.manifesto-question::before{
+  content:'';display:block;width:3px;height:40px;
+  background:var(--green);margin:0 auto 28px;border-radius:2px;
+}
+.manifesto-answer{
+  max-width:540px;
+}
+.manifesto-answer p{
+  font-size:1.05rem;color:var(--muted);line-height:1.8;margin-bottom:10px;
+}
+.manifesto-answer-en{
+  font-size:.82rem !important;color:rgba(107,107,107,.6) !important;
+  letter-spacing:.02em;font-style:italic;
+}
+.manifesto-brand{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.manifesto-logo{
+  font-size:1.3rem;font-weight:800;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.manifesto-tagline{
+  font-size:.95rem;color:var(--green);font-weight:600;
+  letter-spacing:.02em;
+}
+.manifesto-cta{
+  display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;
+}
+.btn-manifesto{
+  background:var(--green);color:#fff;
+  padding:14px 36px;border-radius:32px;
+  font-size:1rem;font-weight:700;text-decoration:none;
+  box-shadow:0 6px 24px rgba(26,158,114,.3);
+  transition:transform .2s,box-shadow .2s;letter-spacing:.01em;
+}
+.btn-manifesto:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,158,114,.4);}
+.btn-manifesto-ghost{
+  color:var(--muted);font-size:.9rem;font-weight:500;
+  text-decoration:none;transition:color .2s;
+}
+.btn-manifesto-ghost:hover{color:var(--green);}
+
+/* ─── GATE (AUDIENCE SPLIT) ─── */
+.gate{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:100px 24px 60px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.gate-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 30% 55%, rgba(26,158,114,.12) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 75% 30%, rgba(178,223,208,.18) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* subtle grid */
+.gate-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(26,158,114,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,158,114,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+.gate-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green-lt);border:1px solid var(--green-mid);
+  color:var(--green-dk);font-size:.78rem;font-weight:700;
+  padding:5px 14px;border-radius:20px;margin-bottom:28px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.gate h1{
+  font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;
+  line-height:1.15;margin-bottom:14px;letter-spacing:-.03em;
+}
+.gate h1 em{font-style:normal;color:var(--green);}
+.gate-sub{
+  font-size:1.05rem;color:var(--muted);max-width:480px;margin:0 auto 52px;
+}
+/* Three-path cards */
+.gate-paths{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+  max-width:860px;width:100%;
+}
+.gate-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:36px 28px 32px;
+  cursor:pointer;text-decoration:none;color:var(--text);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .22s,border-color .2s;
+  display:flex;flex-direction:column;align-items:flex-start;
+  text-align:left;position:relative;overflow:hidden;
+}
+.gate-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--card-accent,var(--green));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .22s;
+}
+.gate-card:hover{
+  transform:translateY(-6px);box-shadow:var(--shadow-md);
+  border-color:var(--card-accent,var(--green));
+}
+.gate-card:hover::after{transform:scaleX(1);}
+.gate-card-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;margin-bottom:20px;
+  background:var(--card-icon-bg,var(--green-lt));
+}
+.gate-card-tag{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--card-accent,var(--green));margin-bottom:6px;
+}
+.gate-card h3{font-size:1.15rem;font-weight:800;margin-bottom:8px;letter-spacing:-.01em;}
+.gate-card p{font-size:.86rem;color:var(--muted);line-height:1.6;}
+.gate-card-arrow{
+  margin-top:20px;font-size:.85rem;font-weight:600;
+  color:var(--card-accent,var(--green));
+  display:flex;align-items:center;gap:4px;
+}
+/* card accent variants */
+.gc-user  {--card-accent:#1a9e72;--card-icon-bg:#e8f7f2;}
+.gc-kol   {--card-accent:#6b4fbb;--card-icon-bg:#f2eeff;}
+.gc-brand {--card-accent:#b8732a;--card-icon-bg:#fef3e8;}
+
+/* ─── SECTION SHELL ─── */
+.section{padding:88px 24px;max-width:1080px;margin:0 auto;}
+.section-full{padding:88px 0;}
+.inner{max-width:1080px;margin:0 auto;padding:0 24px;}
+.label{
+  font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--green);margin-bottom:10px;display:block;
+}
+.label.purple{color:#6b4fbb;}
+.label.amber{color:#b8732a;}
+.h2{
+  font-size:clamp(1.9rem,4vw,2.8rem);font-weight:900;
+  margin-bottom:14px;letter-spacing:-.03em;line-height:1.2;
+}
+.sub{font-size:1rem;color:var(--muted);max-width:520px;}
+
+/* ─── DIVIDER ─── */
+.divider{
+  max-width:1080px;margin:0 auto;padding:0 24px;
+}
+.divider hr{border:none;border-top:1px solid var(--border);}
+
+/* ─── HOW IT WORKS ─── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px;}
+.step{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:32px 26px;
+  transition:transform .2s,box-shadow .2s;
+}
+.step:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+.step-n{
+  font-size:.7rem;font-weight:800;letter-spacing:.14em;
+  color:var(--green-mid);margin-bottom:20px;display:block;
+}
+.step h3{font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+.step p{font-size:.875rem;color:var(--muted);}
+
+/* ─── TASTE DEMO ─── */
+.demo-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:48px 44px;margin-top:48px;
+  box-shadow:var(--shadow-sm);
+}
+.demo-head{margin-bottom:36px;}
+.demo-head h3{font-size:1.25rem;font-weight:800;margin-bottom:6px;}
+.demo-head p{font-size:.9rem;color:var(--muted);}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:36px;}
+.s-label{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:.875rem;font-weight:600;margin-bottom:10px;}
+.s-label em{font-style:normal;font-size:1.1rem;color:var(--green);font-weight:700;}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;
+  background:linear-gradient(to right,var(--green) var(--val,50%),var(--green-mid) var(--val,50%));
+  border-radius:3px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;
+  background:#fff;border:3px solid var(--green);border-radius:50%;
+  box-shadow:0 2px 10px rgba(26,158,114,0.3);transition:transform .15s;
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25);}
+.demo-result{
+  display:flex;align-items:center;gap:18px;
+  background:var(--green-pale);border:1.5px solid var(--green-mid);
+  border-radius:var(--r-sm);padding:20px 24px;
+  transition:background .3s;
+}
+.result-emoji{font-size:2.6rem;transition:all .25s;}
+.result-cat{font-size:1.05rem;font-weight:800;color:var(--green);margin-bottom:4px;}
+.result-desc{font-size:.86rem;color:var(--muted);}
+
+/* ─── HOLIM ─── */
+.holim-bg{background:linear-gradient(145deg,#0c5e42 0%,#1a9e72 60%,#22c487 100%);}
+.holim-inner{color:#fff;}
+.holim-inner .label{color:rgba(255,255,255,.55);}
+.holim-inner .h2{color:#fff;}
+.holim-inner .sub{color:rgba(255,255,255,.7);max-width:500px;}
+.hp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;}
+.hp-card{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);
+  border-radius:var(--r-md);padding:28px 22px;backdrop-filter:blur(6px);
+}
+.hp-icon{font-size:1.6rem;margin-bottom:14px;}
+.hp-card h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.hp-card p{font-size:.82rem;color:rgba(255,255,255,.65);line-height:1.6;}
+
+/* ─── TRIBE ─── */
+.tribe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;}
+.tribe-card{
+  background:var(--card);border:1px solid var(--border);
+  border-top-width:3px;border-radius:var(--r-md);padding:26px 22px;
+  transition:transform .2s;
+}
+.tribe-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-sm);}
+.tribe-emoji{font-size:2rem;margin-bottom:10px;}
+.tribe-card h4{font-size:.95rem;font-weight:700;margin-bottom:6px;}
+.tribe-card p{font-size:.82rem;color:var(--muted);}
+
+/* ─── KOL SECTION ─── */
+.kol-bg{background:#f8f6ff;}
+.kol-inner{}
+.kol-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start;}
+.kol-steps-list{display:flex;flex-direction:column;gap:24px;}
+.kol-step{display:flex;gap:16px;align-items:flex-start;}
+.kol-num{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:#6b4fbb;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:700;
+}
+.kol-step-body h4{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+.kol-step-body p{font-size:.86rem;color:var(--muted);}
+.kol-reward-card{
+  background:#fff;border:1.5px solid #d8d0f5;
+  border-radius:var(--r-md);padding:36px 32px;
+  box-shadow:0 4px 20px rgba(107,79,187,.08);
+}
+.kol-reward-card h3{
+  font-size:1.1rem;font-weight:800;margin-bottom:24px;
+  color:#6b4fbb;
+}
+.reward-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 0;border-bottom:1px solid #ede8ff;
+  font-size:.88rem;
+}
+.reward-row:last-of-type{border-bottom:none;}
+.reward-label{color:var(--text-2);}
+.reward-sub{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.reward-val{font-weight:700;color:#6b4fbb;white-space:nowrap;}
+.kol-cta-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#06C755;color:#fff;
+  padding:11px 22px;border-radius:22px;
+  font-size:.875rem;font-weight:600;text-decoration:none;
+  margin-top:24px;transition:opacity .2s;
+}
+.kol-cta-btn:hover{opacity:.85;}
+
+/* ─── B2B ─── */
+.b2b-bg{background:#141414;}
+.b2b-inner{color:#fff;}
+.b2b-inner .label{color:#c8a87a;}
+.b2b-inner .h2{color:#fff;}
+.b2b-inner .sub{color:rgba(255,255,255,.55);}
+.b2b-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:48px;}
+.b2b-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-md);padding:28px 24px;
+  transition:background .2s,border-color .2s;
+}
+.b2b-card:hover{
+  background:rgba(184,115,42,.07);
+  border-color:rgba(184,115,42,.3);
+}
+.b2b-icon{font-size:1.6rem;margin-bottom:14px;}
+.b2b-card h4{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.b2b-card p{font-size:.83rem;color:rgba(255,255,255,.5);line-height:1.65;}
+.b2b-cta-area{
+  margin-top:56px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-md);padding:36px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.b2b-cta-area p{color:rgba(255,255,255,.6);font-size:.95rem;max-width:420px;}
+.b2b-cta-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-amber{
+  background:#b8732a;color:#fff;padding:12px 24px;border-radius:24px;
+  font-size:.9rem;font-weight:600;text-decoration:none;
+  transition:opacity .2s;white-space:nowrap;
+}
+.btn-amber:hover{opacity:.85;}
+.btn-ghost-amber{
+  color:#c8a87a;border:1.5px solid rgba(200,168,122,.4);
+  padding:11px 22px;border-radius:24px;font-size:.9rem;font-weight:600;
+  text-decoration:none;transition:background .2s;white-space:nowrap;
+}
+.btn-ghost-amber:hover{background:rgba(184,115,42,.15);}
+
+/* ─── CONTACT ─── */
+.contact-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:52px 48px;
+  display:flex;gap:48px;align-items:center;flex-wrap:wrap;
+  box-shadow:var(--shadow-sm);
+}
+.contact-left{flex:1;min-width:260px;}
+.contact-left h2{font-size:1.6rem;font-weight:900;margin-bottom:10px;letter-spacing:-.02em;}
+.contact-left p{font-size:.95rem;color:var(--muted);}
+.contact-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;}
+.btn-line{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#06C755;color:#fff;padding:11px 22px;border-radius:22px;
+  font-size:.875rem;font-weight:600;text-decoration:none;transition:opacity .2s;
+}
+.btn-line:hover{opacity:.85;}
+.btn-green{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green);color:#fff;padding:11px 22px;border-radius:22px;
+  font-size:.875rem;font-weight:600;text-decoration:none;transition:opacity .2s;
+}
+.btn-green:hover{opacity:.85;}
+.contact-deco{
+  font-size:6rem;line-height:1;
+  filter:drop-shadow(0 8px 20px rgba(26,158,114,.15));
+}
+
+/* ─── FOOTER ─── */
+footer{
+  text-align:center;padding:36px 24px;
+  border-top:1px solid var(--border);
+  font-size:.82rem;color:var(--muted);
+}
+footer strong{color:var(--green);}
+footer a{color:var(--muted);text-decoration:none;}
+
+/* ─── VIDEO ─── */
+.video-section{
+  background:var(--text);
+  padding:72px 24px;
+}
+.video-inner{
+  max-width:800px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;gap:24px;
+}
+.video-label{
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+}
+.video-thumb-link{
+  display:block;width:100%;position:relative;
+  border-radius:var(--r-md);overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.5);
+  text-decoration:none;
+  transition:transform .25s,box-shadow .25s;
+}
+.video-thumb-link:hover{
+  transform:translateY(-3px);
+  box-shadow:0 32px 72px rgba(0,0,0,.65);
+}
+.video-thumb-img{
+  width:100%;display:block;
+  aspect-ratio:16/9;object-fit:cover;
+}
+.video-play-btn{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(26,158,114,.9);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,background .2s;
+  backdrop-filter:blur(4px);
+}
+.video-thumb-link:hover .video-play-btn{
+  transform:translate(-50%,-50%) scale(1.12);
+  background:var(--green);
+}
+.video-thumb-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px 20px 16px;
+  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 100%);
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+}
+.video-thumb-label span:first-child{
+  font-size:.88rem;color:#fff;font-weight:600;line-height:1.4;
+}
+.video-yt-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.8) !important;
+  font-size:.72rem !important;font-weight:500 !important;
+  padding:5px 10px;border-radius:12px;white-space:nowrap;
+  backdrop-filter:blur(4px);
+}
+
+/* ─── COLLAB STRIP ─── */
+.collab-strip{
+  background:var(--bg);
+  border-top:1px solid var(--border);
+  padding:20px 24px;
+}
+.collab-inner{
+  max-width:1080px;margin:0 auto;
+  display:flex;align-items:center;justify-content:center;
+  gap:20px;flex-wrap:wrap;
+}
+.collab-text{
+  font-size:.82rem;color:var(--muted);font-weight:500;
+}
+.collab-sep{color:var(--border);font-size:1rem;}
+.collab-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.82rem;color:var(--muted);font-weight:500;
+  text-decoration:none;
+  transition:color .2s;
+  border-bottom:1px solid transparent;
+}
+.collab-link:hover{color:var(--green);border-bottom-color:var(--green-mid);}
+
+/* ─── FADE IN ─── */
+.fi{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.fi.v{opacity:1;transform:none;}
+.fi-d1{transition-delay:.08s;}
+.fi-d2{transition-delay:.16s;}
+.fi-d3{transition-delay:.24s;}
+.fi-d4{transition-delay:.32s;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:860px){
+  .gate-paths{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+  .hp-grid{grid-template-columns:1fr 1fr;}
+  .tribe-grid{grid-template-columns:1fr 1fr;}
+  .kol-grid{grid-template-columns:1fr;}
+  .b2b-grid{grid-template-columns:1fr;}
+  .sliders{grid-template-columns:1fr;}
+  .b2b-cta-area{flex-direction:column;}
+  .contact-card{flex-direction:column;padding:36px 28px;}
+  .demo-wrap{padding:32px 24px;}
+}
+@media(max-width:600px){
+  nav{padding:0 16px;}
+  .nav-links{display:none;}
+  .gate-paths{gap:12px;}
+  .hp-grid{grid-template-columns:1fr;}
+  .tribe-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <!-- TasteJo logo: orange circle + two leaves -->
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" stroke="#c8732a" stroke-width="2"/>
+      <!-- left leaf, pointing upper-left -->
+      <path d="M16 17 C15 12.5 11.5 9 8 10 C9 14 12.5 16.5 16 17Z" fill="#1d4d2e"/>
+      <!-- right leaf, pointing lower-right -->
+      <path d="M16 15 C17 19.5 20.5 23 24 22 C23 18 19.5 15.5 16 15Z" fill="#2e6b41"/>
+    </svg>
+    TasteJo
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">如何運作</a></li>
+    <li><a href="#holim">Holim Points</a></li>
+    <li><a href="#tribe">共鳴族群</a></li>
+    <li><a href="#collab">合作洽詢</a></li>
+  </ul>
+  <a href="https://apps.apple.com/tw/app/taste-jo/id6448245600" class="nav-cta">下載 App</a>
+</nav>
+
+<!-- ══ HERO：MANIFESTO ══ -->
+<div class="hero-manifesto" id="top">
+  <div class="gate-bg"></div>
+
+  <!-- 問題 -->
+  <div class="manifesto-question fi">
+    為什麼風味，<br>只能由少數人定義？
+  </div>
+
+  <!-- 答案引導 -->
+  <div class="manifesto-answer fi fi-d1">
+    <p>
+      每一個喝茶的人，都有一套屬於自己的感受語言。<br>
+      但那些感受，從來沒有被認真記錄過。
+    </p>
+    <p class="manifesto-answer-en">
+      Every tea drinker has their own sensory language.<br>
+      It just hasn't been recorded. Until now.
+    </p>
+  </div>
+
+  <!-- 品牌 -->
+  <div class="manifesto-brand fi fi-d2">
+      <div class="manifesto-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#c8732a" stroke-width="2"/>
+        <path d="M16 17 C15 12.5 11.5 9 8 10 C9 14 12.5 16.5 16 17Z" fill="#1d4d2e"/>
+        <path d="M16 15 C17 19.5 20.5 23 24 22 C23 18 19.5 15.5 16 15Z" fill="#2e6b41"/>
+      </svg>
+      TasteJo
+    </div>
+    <div class="manifesto-tagline">把每一個人的感受，納入風味的共識</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="manifesto-cta fi fi-d3">
+    <a href="https://apps.apple.com/tw/app/taste-jo/id6448245600" class="btn-manifesto">下載 TasteJo App</a>
+    <a href="#how" class="btn-manifesto-ghost">了解更多 ↓</a>
+  </div>
+
+</div>
+
+<!-- ══ VIDEO ══ -->
+<div class="video-section fi">
+  <div class="video-inner">
+    <div class="video-label">看看 TasteJo 如何運作</div>
+    <a class="video-thumb-link" href="https://youtu.be/BTznSIKe15k" target="_blank" rel="noopener">
+      <img
+        src="https://img.youtube.com/vi/BTznSIKe15k/maxresdefault.jpg"
+        alt="TasteJo｜重寫風味世界的共識機制"
+        class="video-thumb-img"
+        onerror="this.src='https://img.youtube.com/vi/BTznSIKe15k/hqdefault.jpg'"
+      >
+      <div class="video-play-btn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <div class="video-thumb-label">
+        <span>TasteJo｜重寫風味世界的共識機制</span>
+        <span class="video-yt-badge">在 YouTube 觀看</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ══ FOR USER：如何運作 ══ -->
+<section class="section" id="how">
+  <div class="divider" style="margin-bottom:0;padding:0;"><hr></div>
+  <div style="padding-top:72px;">
+    <span class="label fi">For 茶友</span>
+    <h2 class="h2 fi">三步驟，開始你的品評旅程</h2>
+    <p class="sub fi">不需要專業訓練，只需要誠實的味覺感受。</p>
+    <div class="steps">
+      <div class="step fi">
+        <span class="step-n">STEP 01</span>
+        <h3>選茶・掃碼</h3>
+        <p>從合作茶莊清單選取，或直接掃描條碼，快速找到你手上這杯茶。</p>
+      </div>
+      <div class="step fi fi-d1">
+        <span class="step-n">STEP 02</span>
+        <h3>落點・記錄</h3>
+        <p>在甘甜感與醇韻感兩個軸線構成的座標圖上，落下屬於你的那一點。不需要打分，只需要誠實。</p>
+      </div>
+      <div class="step fi fi-d2">
+        <span class="step-n">STEP 03</span>
+        <h3>共鳴・成長</h3>
+        <p>你的評分會和其他人比對，獲得 Holim Points，並找到品味相近的族人。</p>
+      </div>
+    </div>
+
+    <!-- 互動滑桿 -->
+    <div class="demo-wrap fi">
+      <div class="demo-head">
+        <h3>試試看：你是哪種品味？</h3>
+        <p>拖動下方滑桿，看看你的味覺偏好屬於哪個分類。</p>
+      </div>
+      <div class="sliders">
+        <div>
+          <div class="s-label">甘度（甜感強度）<em id="sv">5</em></div>
+          <input type="range" id="sweet" min="1" max="10" value="5">
+        </div>
+        <div>
+          <div class="s-label">醇度（濃郁厚度）<em id="mv">5</em></div>
+          <input type="range" id="mellow" min="1" max="10" value="5">
+        </div>
+      </div>
+      <div class="demo-result">
+        <div class="result-emoji" id="r-emoji">⚖️</div>
+        <div>
+          <div class="result-cat" id="r-cat">平衡・順口系</div>
+          <div class="result-desc" id="r-desc">中間值，追求協調、順口的風格。你對風味保持開放，什麼茶都能欣賞。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOLIM POINTS ══ -->
+<div class="section-full holim-bg" id="holim">
+<div class="inner holim-inner" style="padding-top:88px;padding-bottom:88px;">
+  <span class="label fi">Holim Points</span>
+  <h2 class="h2 fi">積分不只是分數<br>而是你品味誠意的回饋</h2>
+  <p class="sub fi">每一次品評都被納入整體分析。當你的感受與眾人共鳴，你就獲得更多 HP。</p>
+  <div class="hp-grid">
+    <div class="hp-card fi">
+      <div class="hp-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="2.5" fill="rgba(255,255,255,0.9)" stroke="none"/>
+          <line x1="12" y1="3" x2="12" y2="6"/>
+          <line x1="12" y1="18" x2="12" y2="21"/>
+          <line x1="3" y1="12" x2="6" y2="12"/>
+          <line x1="18" y1="12" x2="21" y2="12"/>
+        </svg>
+      </div>
+      <h4>提交品評</h4>
+      <p>每完成一筆正式品評（每個茶品每天一次），立即獲得初始點數。</p>
+    </div>
+    <div class="hp-card fi fi-d1">
+      <div class="hp-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="5" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+          <line x1="7" y1="12" x2="10" y2="12"/>
+          <line x1="14" y1="12" x2="17" y2="12"/>
+          <line x1="12" y1="7" x2="12" y2="10"/>
+          <line x1="12" y1="14" x2="12" y2="17"/>
+        </svg>
+      </div>
+      <h4>共識更新</h4>
+      <p>每週根據你的評分與眾人平均的距離自動更新，距離越近，獲得越多。</p>
+    </div>
+    <div class="hp-card fi fi-d2">
+      <div class="hp-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.6" stroke-linecap="round">
+          <path d="M2 12 Q5 6 8 12 Q11 18 14 12 Q17 6 20 12" />
+          <circle cx="12" cy="12" r="1.5" fill="rgba(255,255,255,0.9)" stroke="none"/>
+        </svg>
+      </div>
+      <h4>共鳴榜 Wavelength</h4>
+      <p>你與眾人味覺感受的「共鳴程度」，帶領同好探索風味世界。</p>
+    </div>
+    <div class="hp-card fi fi-d3">
+      <div class="hp-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 7 L12 12 L16 15" />
+          <circle cx="12" cy="12" r="1.2" fill="rgba(255,255,255,0.9)" stroke="none"/>
+        </svg>
+      </div>
+      <h4>獨行榜 Lowball<br><small style="font-weight:400;font-size:.78rem;">近期推出</small></h4>
+      <p>分數越低代表口味越獨特。誠實感受，在獨行榜中脫穎而出。</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TRIBES ══ -->
+<section class="section" id="tribe">
+  <span class="label fi">共鳴族群</span>
+  <h2 class="h2 fi">找到你的茶人同好</h2>
+  <p class="sub fi">TasteJo 根據你的品評軌跡，自動計算「共鳴分數」，把真正品味相近的人聚在一起。</p>
+  <div class="tribe-grid">
+    <div class="tribe-card fi" style="border-top-color:#1a9e72;">
+      <div class="tribe-emoji">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a9e72" stroke-width="1.5" stroke-linecap="round">
+          <path d="M12 21 C12 21 4 15 4 9 C4 5 8 3 12 6 C16 3 20 5 20 9 C20 15 12 21 12 21Z" fill="#e8f7f2"/>
+          <line x1="12" y1="21" x2="12" y2="10"/>
+        </svg>
+      </div>
+      <h4>濃郁識趣族</h4>
+      <p>甘度與醇度都偏高，偏好鮮明有層次的風味，享受每一口的複雜感。</p>
+    </div>
+    <div class="tribe-card fi fi-d1" style="border-top-color:#3B7DD8;">
+      <div class="tribe-emoji">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B7DD8" stroke-width="1.5" stroke-linecap="round">
+          <path d="M12 3 C12 3 5 12 5 16 A7 7 0 0 0 19 16 C19 12 12 3 12 3Z" fill="#eaf2ff"/>
+        </svg>
+      </div>
+      <h4>清淡品賞族</h4>
+      <p>追求茶的本質清香，不喜歡過度刺激，細品每一口的細膩。</p>
+    </div>
+    <div class="tribe-card fi fi-d2" style="border-top-color:#D4A017;">
+      <div class="tribe-emoji">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="12" cy="12" r="5" fill="#fff8e1"/>
+          <line x1="12" y1="3" x2="12" y2="7"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+          <line x1="3" y1="12" x2="7" y2="12"/>
+          <line x1="17" y1="12" x2="21" y2="12"/>
+          <line x1="5.6" y1="5.6" x2="8.5" y2="8.5"/>
+          <line x1="15.5" y1="15.5" x2="18.4" y2="18.4"/>
+          <line x1="18.4" y1="5.6" x2="15.5" y2="8.5"/>
+          <line x1="8.5" y1="15.5" x2="5.6" y2="18.4"/>
+        </svg>
+      </div>
+      <h4>甜感共鳴族</h4>
+      <p>甘度高於醇度，偏好入口爆發甜香，初香奔放派的代表。</p>
+    </div>
+    <div class="tribe-card fi fi-d3" style="border-top-color:#C05C5C;">
+      <div class="tribe-emoji">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C05C5C" stroke-width="1.5" stroke-linecap="round">
+          <path d="M6 8 H18 L16.5 18 Q16 20 14 20 H10 Q8 20 7.5 18 Z" fill="#fdeaea"/>
+          <path d="M18 10 C21 10 21 14 18 14"/>
+          <line x1="9" y1="7" x2="9" y2="5"/>
+          <line x1="12" y1="7" x2="12" y2="4"/>
+          <line x1="15" y1="7" x2="15" y2="5"/>
+        </svg>
+      </div>
+      <h4>醇韻深邃族</h4>
+      <p>醇度明顯高於甘度，講究濃郁滋味與深厚回韻，厚重回韻派。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="section">
+  <div class="contact-card fi">
+    <div class="contact-left">
+      <h2>準備好了嗎？<br>加入 TasteJo</h2>
+      <p>下載 App，落下你的第一個點。你的感受，值得被記住。</p>
+      <div class="contact-btns">
+        <a href="https://apps.apple.com/tw/app/taste-jo/id6448245600" class="btn-green">下載 App</a>
+        <a href="https://lin.ee/FeERHez" class="btn-line" target="_blank">加入 LINE 社群</a>
+      </div>
+    </div>
+    <div class="contact-deco">
+      <svg width="80" height="80" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14" stroke="#c8732a" stroke-width="2"/>
+        <path d="M16 17 C15 12.5 11.5 9 8 10 C9 14 12.5 16.5 16 17Z" fill="#1d4d2e"/>
+        <path d="M16 15 C17 19.5 20.5 23 24 22 C23 18 19.5 15.5 16 15Z" fill="#2e6b41"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COLLAB STRIP ══ -->
+<div class="collab-strip" id="collab">
+  <div class="collab-inner">
+    <div class="collab-text">我們也歡迎</div>
+    <a href="https://lin.ee/FeERHez" class="collab-link" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 11.5 16 6.5"/><path d="M8 12.5 16 17.5"/></svg>
+      內容創作者合作
+    </a>
+    <div class="collab-sep">·</div>
+    <a href="https://airtable.com/appzl3Fck3kzHlK26/paguU5XiFr0OploVg/form" class="collab-link" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
+      茶品牌上架洽詢
+    </a>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>© 2025 <strong>TasteJo</strong>｜品味即對話，茶藝即陪伴</p>
+  <p style="margin-top:6px;">LINE ID: <a href="https://lin.ee/FeERHez" target="_blank">@803qexkg</a></p>
+</footer>
+
+<script>
+/* ── Fade-in observer ── */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('v'); }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.fi').forEach(el => io.observe(el));
+
+/* ── Slider fill gradient ── */
+function updateFill(el){
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.setProperty('--val', pct + '%');
+}
+
+/* ── Taste classifier ── */
+const sweet  = document.getElementById('sweet');
+const mellow = document.getElementById('mellow');
+const svEl   = document.getElementById('sv');
+const mvEl   = document.getElementById('mv');
+const rEmoji = document.getElementById('r-emoji');
+const rCat   = document.getElementById('r-cat');
+const rDesc  = document.getElementById('r-desc');
+
+function classify(s,m){
+  const hi=6, diff=s-m;
+  if(s>=hi&&m>=hi) return {e:'🌿',c:'鮮明・醇厚系',d:'甘度與醇度都偏高，你偏好鮮明有層次的風味，屬於「濃郁識趣族」！'};
+  if(s<hi&&m<hi)   return {e:'💧',c:'自然・舒爽系',d:'兩者都偏低，你追求茶的本質清香，是「清淡品賞族」！'};
+  if(diff>2)        return {e:'🍯',c:'初香奔放派',  d:'甘度顯著高於醇度，你偏好入口爆發的香氣與甜感！'};
+  if(diff<-2)       return {e:'🫖',c:'厚重回韻派',  d:'醇度明顯高於甘度，你講究濃郁滋味與深厚回韻。'};
+  return              {e:'⚖️',c:'平衡・順口系',  d:'中間值，追求協調順口的風格，對各種茶都能欣賞。'};
+}
+
+function update(){
+  const s=+sweet.value, m=+mellow.value;
+  svEl.textContent=s; mvEl.textContent=m;
+  updateFill(sweet); updateFill(mellow);
+  const r=classify(s,m);
+  rEmoji.textContent=r.e; rCat.textContent=r.c; rDesc.textContent=r.d;
+}
+sweet.addEventListener('input', update);
+mellow.addEventListener('input', update);
+updateFill(sweet); updateFill(mellow);
+update();
+</script>
+</body>
+</html>

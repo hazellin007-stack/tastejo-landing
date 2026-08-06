@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TasteJo · 品牌洞察儀表板</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --green:      #2a7a5a;
+    --green-light:#3fa87a;
+    --gold:       #c8a96e;
+    --ink:        #1a1a1a;
+    --ink-soft:   #4a4a4a;
+    --ink-muted:  #888;
+    --border:     #e0e0e0;
+    --bg:         #f9f7f3;
+    --card:       #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system,"Helvetica Neue","PingFang TC",sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+
+  /* ── Header ── */
+  header { background:var(--green); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 32px; height:60px; position:sticky; top:0; z-index:200; box-shadow:0 2px 12px rgba(0,0,0,.15); }
+  .logo { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; }
+  .header-tag { font-size:11px; background:rgba(255,255,255,.18); padding:3px 10px; border-radius:20px; letter-spacing:.06em; }
+
+  /* ── Vendor bar ── */
+  .vendor-bar { background:var(--card); border-bottom:1px solid var(--border); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+  .vendor-info h1 { font-size:20px; font-weight:700; }
+  .vendor-info p { font-size:13px; color:var(--ink-muted); margin-top:2px; }
+  .date-badge { font-size:12px; color:var(--ink-muted); background:var(--bg); padding:6px 14px; border-radius:20px; border:1px solid var(--border); }
+
+  /* ── Filters ── */
+  .filters { padding:14px 32px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--bg); border-bottom:1px solid var(--border); }
+  .filter-label { font-size:11px; color:var(--ink-muted); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  select { appearance:none; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:7px 28px 7px 12px; font-size:13px; color:var(--ink); cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 9px center; }
+  select:focus { outline:none; border-color:var(--green); }
+  .tab-btn { padding:7px 15px; border-radius:20px; border:1.5px solid var(--border); background:transparent; font-size:13px; cursor:pointer; transition:all .2s; color:var(--ink-soft); }
+  .tab-btn.active { background:var(--green); border-color:var(--green); color:#fff; font-weight:600; }
+
+  /* ── KPI ── */
+  .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; padding:24px 32px; }
+  .kpi-card { background:var(--card); border-radius:14px; padding:20px 22px; border:1px solid var(--border); }
+  .kpi-label { font-size:11px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+  .kpi-value { font-size:32px; font-weight:700; margin-top:6px; color:var(--green); }
+  .kpi-sub { font-size:12px; color:var(--ink-muted); margin-top:4px; }
+
+  /* ── Main grid ── */
+  .main-grid { display:grid; grid-template-columns:1fr 340px; gap:20px; padding:0 32px 32px; }
+  .left-col,.right-col { display:flex; flex-direction:column; gap:20px; }
+  .chart-card { background:var(--card); border-radius:14px; border:1px solid var(--border); padding:24px; display:flex; flex-direction:column; gap:16px; }
+  .chart-card h2 { font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .legend-row { display:flex; gap:14px; flex-wrap:wrap; }
+  .legend-chip { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-soft); }
+  .legend-dot,.legend-sq { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .legend-sq { border-radius:2px; }
+  .axis-label { position:absolute; font-size:11px; color:var(--ink-muted); font-weight:700; }
+  .axis-x { bottom:-20px; right:0; }
+  .axis-y { top:0; left:-18px; writing-mode:vertical-rl; transform:rotate(180deg); }
+  .donut-wrap { max-width:200px; margin:0 auto; }
+  .tribe-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .tribe-item { display:flex; align-items:center; gap:10px; }
+  .tribe-bar-bg { flex:1; height:6px; background:var(--bg); border-radius:3px; overflow:hidden; }
+  .tribe-bar-fill { height:100%; border-radius:3px; transition:width .6s; }
+  .tribe-pct { font-size:12px; font-weight:700; color:var(--ink-soft); min-width:36px; text-align:right; }
+  .tribe-name-sm { font-size:11px; color:var(--ink-soft); min-width:68px; display:flex; align-items:center; gap:4px; }
+  .comments-list { list-style:none; display:flex; flex-direction:column; gap:12px; max-height:320px; overflow-y:auto; padding-right:4px; }
+  .comments-list::-webkit-scrollbar { width:4px; }
+  .comments-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .comment-item { padding:12px 14px; background:var(--bg); border-radius:10px; font-size:13px; line-height:1.55; }
+  .comment-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; gap:6px; flex-wrap:wrap; }
+  .comment-user { font-size:11px; font-weight:700; color:var(--green); }
+  .comment-tribe-tag { font-size:10px; padding:2px 7px; border-radius:20px; font-weight:700; }
+  .comment-text { color:var(--ink-soft); }
+  .comment-footer { margin-top:6px; display:flex; gap:8px; align-items:center; }
+  .comment-date,.comment-score { font-size:10px; color:var(--ink-muted); }
+  .comment-score { background:var(--border); padding:1px 6px; border-radius:10px; }
+  .insight-card { background:linear-gradient(135deg,#f0f4ff,#e8f4ef); border-radius:12px; padding:16px; border:1px solid #d0dde8; }
+  .insight-title { font-size:11px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+  .insight-item { font-size:13px; color:var(--ink-soft); line-height:1.6; padding:4px 0; border-bottom:1px solid #e0e8f0; }
+  .insight-item:last-child { border-bottom:none; }
+  .insight-item strong { color:var(--green); }
+
+  /* ── 設定品牌 FAB ── */
+  .fab {
+    position:fixed; bottom:32px; right:32px; z-index:300;
+    background:var(--green); color:#fff;
+    border:none; border-radius:28px;
+    padding:14px 22px; font-size:15px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; gap:8px;
+    box-shadow:0 4px 20px rgba(42,122,90,.4);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .fab:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(42,122,90,.45); }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0; z-index:400;
+    background:rgba(0,0,0,.45); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--card); border-radius:20px;
+    width:min(560px,92vw); max-height:90vh; overflow-y:auto;
+    padding:32px; box-shadow:0 24px 60px rgba(0,0,0,.2);
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .modal h2 { font-size:18px; font-weight:700; margin-bottom:4px; }
+  .modal-sub { font-size:13px; color:var(--ink-muted); margin-bottom:24px; }
+
+  /* Preset chips */
+  .preset-section { margin-bottom:24px; }
+  .preset-label { font-size:11px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
+  .preset-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .preset-chip {
+    padding:8px 14px; border-radius:20px; border:1.5px solid var(--border);
+    background:var(--bg); font-size:13px; cursor:pointer;
+    transition:all .15s; color:var(--ink-soft);
+    display:flex; align-items:center; gap:6px;
+  }
+  .preset-chip:hover { border-color:var(--green); color:var(--green); }
+  .preset-chip.selected { background:var(--green); border-color:var(--green); color:#fff; font-weight:600; }
+
+  /* Form fields */
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field.full { grid-column:1/-1; }
+  .field label { font-size:11px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.05em; }
+  .field input, .field select {
+    width:100%; padding:10px 14px; border:1.5px solid var(--border);
+    border-radius:10px; font-size:14px; background:var(--bg);
+    color:var(--ink); transition:border-color .2s;
+    appearance:none;
+  }
+  .field input:focus, .field select:focus { outline:none; border-color:var(--green); background:var(--card); }
+
+  /* Style picker */
+  .style-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .style-opt {
+    padding:10px 14px; border-radius:10px; border:1.5px solid var(--border);
+    background:var(--bg); cursor:pointer; text-align:left;
+    transition:all .15s;
+  }
+  .style-opt:hover { border-color:var(--green); }
+  .style-opt.selected { border-color:var(--green); background:#e8f4ef; }
+  .style-opt-name { font-size:13px; font-weight:700; color:var(--ink); }
+  .style-opt-desc { font-size:11px; color:var(--ink-muted); margin-top:2px; }
+
+  /* Modal buttons */
+  .modal-actions { display:flex; gap:10px; margin-top:24px; }
+  .btn-apply {
+    flex:1; padding:13px; border-radius:12px; border:none;
+    background:var(--green); color:#fff; font-size:15px; font-weight:700;
+    cursor:pointer; transition:opacity .2s;
+  }
+  .btn-apply:hover { opacity:.9; }
+  .btn-cancel {
+    padding:13px 20px; border-radius:12px; border:1.5px solid var(--border);
+    background:transparent; font-size:14px; cursor:pointer; color:var(--ink-soft);
+  }
+
+  /* active brand badge */
+  .brand-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:#e8f4ef; color:var(--green); border-radius:20px;
+    padding:4px 12px; font-size:12px; font-weight:700;
+    margin-left:12px; cursor:pointer;
+  }
+
+  footer { text-align:center; padding:24px; font-size:12px; color:var(--ink-muted); border-top:1px solid var(--border); }
+  footer strong { color:var(--green); }
+
+  @media(max-width:900px) {
+    .kpi-row { grid-template-columns:repeat(2,1fr); }
+    .main-grid { grid-template-columns:1fr; }
+    header,.vendor-bar,.filters,.kpi-row,.main-grid { padding-left:16px; padding-right:16px; }
+    .field-row { grid-template-columns:1fr; }
+    .fab { bottom:20px; right:20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <span>🍃</span> TasteJo
+    <span style="font-size:12px;opacity:.7;font-weight:400">品牌洞察儀表板</span>
+  </div>
+  <span class="header-tag">BRAND ANALYTICS · DEMO</span>
+</header>
+
+<!-- Vendor bar -->
+<div class="vendor-bar">
+  <div class="vendor-info">
+    <h1 id="vendorTitle">寓待茶品 <span style="font-size:13px;color:var(--ink-muted);font-weight:400">Eudaimonia Era</span>
+      <span class="brand-badge" onclick="openModal()">✏️ 切換品牌</span>
+    </h1>
+    <p id="vendorMeta">Vendor ID: eudai &nbsp;·&nbsp; 共 3 款茶品、5 批次 &nbsp;·&nbsp; 品評資料截至 2026 年 4 月</p>
+  </div>
+  <div class="date-badge">📅 2025 年 4 月 — 2026 年 4 月</div>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <span class="filter-label">批次</span>
+  <select id="batchSelect" onchange="updateDashboard()">
+    <option value="all">全部批次</option>
+    <option value="B1">批次 A（春季）</option>
+    <option value="B2">批次 B（秋季）</option>
+    <option value="B3">批次 C（冬季）</option>
+  </select>
+  <span class="filter-label">族群</span>
+  <select id="tribeFilter" onchange="updateDashboard()">
+    <option value="all">全部族群</option>
+    <option value="rich">濃郁識趣族</option>
+    <option value="light">清醇同好族</option>
+    <option value="sweet">甜感共鳴族</option>
+    <option value="unf">未形成族群</option>
+  </select>
+  <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap" id="productTabs">
+    <button class="tab-btn active" onclick="switchProduct('all',this)">全部茶品</button>
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-label">累計品評次數</div>
+    <div class="kpi-value" id="kpi-count">—</div>
+    <div class="kpi-sub" id="kpi-delta">近 30 天持續增加</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">平均甜感</div>
+    <div class="kpi-value" id="kpi-sweet">—</div>
+    <div class="kpi-sub">/ 10 分</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">平均醇感</div>
+    <div class="kpi-value" id="kpi-mellow">—</div>
+    <div class="kpi-sub">/ 10 分</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">主要共鳴族群</div>
+    <div class="kpi-value" style="font-size:17px;padding-top:6px" id="kpi-tribe">—</div>
+    <div class="kpi-sub" id="kpi-tribe-sub">—</div>
+  </div>
+</div>
+
+<!-- Main grid -->
+<div class="main-grid">
+  <div class="left-col">
+    <div class="chart-card">
+      <h2>✦ 品評矩陣分佈（甜感 × 醇感）</h2>
+      <div class="legend-row" id="scatterLegend"></div>
+      <div style="position:relative;height:360px;padding-bottom:28px;padding-left:22px">
+        <span class="axis-label axis-y">醇感 ▲</span>
+        <canvas id="scatterChart"></canvas>
+        <span class="axis-label axis-x">甜感 ▶</span>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h2>📈 品評趨勢（月）</h2>
+      <div class="legend-row" id="trendLegend"></div>
+      <div style="height:200px"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+  <div class="right-col">
+    <div class="chart-card">
+      <h2>◉ 族群共鳴分佈</h2>
+      <div class="donut-wrap"><canvas id="donutChart"></canvas></div>
+      <ul class="tribe-list" id="tribeBreakdown"></ul>
+    </div>
+    <div class="chart-card">
+      <h2>💡 品牌洞察</h2>
+      <div class="insight-card"><div class="insight-title">自動分析</div><div id="insightList"></div></div>
+    </div>
+    <div class="chart-card" style="flex:1">
+      <h2>💬 最新品評留言</h2>
+      <ul class="comments-list" id="commentsList"></ul>
+    </div>
+  </div>
+</div>
+
+<footer>Powered by <strong>TasteJo</strong> · 茶品評鑒平台 &nbsp;·&nbsp; 此頁面為品牌合作 Demo，資料為模擬示意</footer>
+
+<!-- FAB -->
+<button class="fab" onclick="openModal()">🏪 設定品牌</button>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <h2>設定品牌</h2>
+    <p class="modal-sub">輸入茶廠資訊，儀表板將即時更新為該品牌的樣貌</p>
+
+    <!-- Presets -->
+    <div class="preset-section">
+      <div class="preset-label">快選 · 示範品牌（虛構示意）</div>
+      <div class="preset-grid" id="presetGrid"></div>
+    </div>
+
+    <!-- Fields -->
+    <div class="field-row">
+      <div class="field">
+        <label>品牌名稱（中文）</label>
+        <input id="f-name-zh" type="text" placeholder="如：寓待茶品">
+      </div>
+      <div class="field">
+        <label>品牌名稱（英文）</label>
+        <input id="f-name-en" type="text" placeholder="如：Eudaimonia Era">
+      </div>
+      <div class="field">
+        <label>產地 / 特色</label>
+        <input id="f-region" type="text" placeholder="如：南投・鹿谷">
+      </div>
+      <div class="field">
+        <label>主力茶品數量</label>
+        <input id="f-products" type="number" min="1" max="20" placeholder="3">
+      </div>
+    </div>
+
+    <!-- Style picker -->
+    <div class="field" style="margin-bottom:8px">
+      <label>茶品口感風格</label>
+    </div>
+    <div class="style-grid" id="styleGrid">
+      <div class="style-opt selected" data-style="light" onclick="selectStyle(this)">
+        <div class="style-opt-name">🌿 清香型</div>
+        <div class="style-opt-desc">高山清香、低甜高醇，清醇族群為主</div>
+      </div>
+      <div class="style-opt" data-style="roasted" onclick="selectStyle(this)">
+        <div class="style-opt-name">🔥 焙火型</div>
+        <div class="style-opt-desc">炭焙熟果香、醇厚回韻，濃郁族群為主</div>
+      </div>
+      <div class="style-opt" data-style="sweet" onclick="selectStyle(this)">
+        <div class="style-opt-name">🍯 甜香型</div>
+        <div class="style-opt-desc">蜜香花果香、甜感明顯，甜感族群為主</div>
+      </div>
+      <div class="style-opt" data-style="rich" onclick="selectStyle(this)">
+        <div class="style-opt-name">🫖 醇厚型</div>
+        <div class="style-opt-desc">複雜層次、高醇低甜，濃郁族群強烈共鳴</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-apply" onclick="applyBrand()">✦ 套用到儀表板</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// PRESETS（虛構示範品牌，僅供 demo 示意）
+// ─────────────────────────────────────────────
+const PRESETS = [
+  { zh:"寓待茶品", en:"Eudaimonia Era", region:"南投・鹿谷", products:3, style:"rich",    slogan:"山頭氣 × 五感覺醒" },
+  { zh:"雲間茶事", en:"Cloudease",      region:"南投・名間", products:2, style:"roasted", slogan:"示範品牌・虛構示意" },
+  { zh:"松嶺茶作", en:"Pineridge",      region:"嘉義・梅山", products:2, style:"light",   slogan:"示範品牌・虛構示意" },
+  { zh:"春山製茶", en:"Springhill",     region:"南投・鹿谷", products:3, style:"rich",    slogan:"示範品牌・虛構示意" },
+  { zh:"曉霧茶園", en:"Dawnmist",       region:"台中・梨山", products:2, style:"sweet",   slogan:"示範品牌・虛構示意" },
+  { zh:"石泉茶堂", en:"Stonespring",    region:"新北・坪林", products:2, style:"light",   slogan:"示範品牌・虛構示意" },
+];
+
+// ─────────────────────────────────────────────
+// TRIBE / STYLE CONFIG
+// ─────────────────────────────────────────────
+const TRIBES = {
+  rich:  { label:"濃郁識趣族", emoji:"🫖", color:"#534AB7" },
+  light: { label:"清醇同好族", emoji:"🌿", color:"#1a9e72" },
+  sweet: { label:"甜感共鳴族", emoji:"🍯", color:"#c8732a" },
+  unf:   { label:"未形成族群", emoji:"⏳", color:"#888780" },
+};
+const TRIBE_KEYS = ["rich","light","sweet","unf"];
+
+// 每種口感風格的散點基準 + 族群分佈
+const STYLE_CONFIG = {
+  light:   { baseSweet:4.5, baseMellow:7.5, weights:[0.25,0.50,0.15,0.10], color:"#1a9e72" },
+  roasted: { baseSweet:4.2, baseMellow:8.2, weights:[0.50,0.25,0.12,0.13], color:"#7D5A3C" },
+  sweet:   { baseSweet:6.5, baseMellow:5.8, weights:[0.15,0.20,0.55,0.10], color:"#c8732a" },
+  rich:    { baseSweet:5.5, baseMellow:8.8, weights:[0.60,0.20,0.12,0.08], color:"#534AB7" },
+};
+
+const STYLE_COMMENTS = {
+  light:   ["清香清透，花香很細膩","沒有多餘的澀感，非常乾淨","適合早晨清飲，輕盈不負擔","花香淡雅，不搶風頭","茶湯顏色漂亮，清澈帶嫩黃","高山的清涼感很明顯","清透的茶湯讓人心情很好","沖第三泡仍有淡淡花香，耐泡","喝完口腔很清新","喉韻很舒服，回甘清爽","發酵度低但不單薄，有層次","香氣比外觀更驚艷"],
+  roasted: ["焙火香很舒服，回甘持久","帶有炭焙香，醇厚感十足","焙火的烘烤感很有辨識度","喉韻深沉，泡到第四泡仍有香氣","焦糖底韻很明顯，很特別","帶有堅果香，喝起來很飽足","火香和茶香比例抓得很好","適合秋冬飲用，很暖胃","炭焙香氣非常純正，沒有雜味","熟果香從第一泡就很明顯"],
+  sweet:   ["蜜香很迷人，甜感剛剛好不膩","冷掉之後甜感更明顯，驚喜！","回甘超棒，喝完嘴裡留著甜","甜感自然，不像人工添加","花果香很突出，我很喜歡","甜中帶著清香，層次感豐富","冰鎮後喝甜感超明顯，強推","蜜香和花香交疊，很複雜但討喜","這種甜很乾淨，不黏膩","比想像中清甜，很適合夏天"],
+  rich:    ["醇厚感很到位，餘韻悠長","複雜度很高，每一泡都不同","香氣穩重，喉韻特別好","回甘很持久，喝完還想再泡","層次感超豐富，是我喝過最有深度的","沉穩的茶體，很適合下午慢慢品","泡到第五泡仍然有韻味","喝完胸口有一股溫熱","越喝越有味道","非常有個性的茶，喜歡就超喜歡"],
+};
+
+const USERS = {
+  rich:  ["山嵐茶客","厚韻者","焙茶人","醇品","茶藏深處","暖茶控","R.Jo"],
+  light: ["清風品茗","葉淨心","茶的語言","輕韻","C.Leaf","淡然者","春水味"],
+  sweet: ["甜茶研究生","回甘控","蜜香追逐者","S.Honey","甜的剛好","靜靜"],
+  unf:   ["茶探索中","好奇茶友","新來的","M.Brew"],
+};
+
+// ─────────────────────────────────────────────
+// BRAND STATE
+// ─────────────────────────────────────────────
+let currentBrand = PRESETS[0];
+let currentProduct = "all";
+let selectedStyle = "rich";
+let scatterChart, donutChart, trendChart;
+let ALL_REVIEWS = [];
+
+function seededRng(seed) {
+  let s = seed;
+  return () => { s=(s*1664525+1013904223)&0xffffffff; return(s>>>0)/0xffffffff; };
+}
+function normalJitter(rng, sd=1.0) {
+  const u1=rng()+0.001, u2=rng();
+  return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2)*sd;
+}
+
+function generateReviews(brand) {
+  const cfg = STYLE_CONFIG[brand.style];
+  const n = (brand.products||3)*40 + Math.floor(Math.random()*20);
+  const reviews = [];
+  const batches = ["B1","B2","B3"];
+  const prodNames = Array.from({length:brand.products||3}, (_,i) => `${brand.zh}・茶品 ${String.fromCharCode(65+i)}`);
+  const rng = seededRng(brand.zh.split("").reduce((a,c)=>a+c.charCodeAt(0),0));
+  for (let i=0;i<n;i++) {
+    const r=rng(); let tk="unf", cum=0;
+    for (let t=0;t<TRIBE_KEYS.length;t++){cum+=cfg.weights[t];if(r<cum){tk=TRIBE_KEYS[t];break;}}
+    const sweet  = Math.min(10,Math.max(1,Math.round((cfg.baseSweet  + normalJitter(rng,1.0))*10)/10));
+    const mellow = Math.min(10,Math.max(1,Math.round((cfg.baseMellow + normalJitter(rng,0.9))*10)/10));
+    const users  = USERS[tk];
+    const pool   = STYLE_COMMENTS[brand.style];
+    const daysAgo= Math.floor(rng()*365)+1;
+    reviews.push({
+      batch:    batches[Math.floor(rng()*3)],
+      product:  prodNames[Math.floor(rng()*prodNames.length)],
+      tribe:    tk, sweet, mellow,
+      user:     users[Math.floor(rng()*users.length)],
+      comment:  pool[Math.floor(rng()*pool.length)],
+      date:     new Date(Date.now()-daysAgo*86400000),
+    });
+  }
+  return reviews.sort((a,b)=>b.date-a.date);
+}
+
+// ─────────────────────────────────────────────
+// MODAL
+// ─────────────────────────────────────────────
+function buildPresets() {
+  const grid = document.getElementById("presetGrid");
+  grid.innerHTML = PRESETS.map((p,i)=>
+    `<div class="preset-chip${i===0?' selected':''}" data-idx="${i}" onclick="selectPreset(this,${i})">
+      ${p.zh}<span style="font-size:10px;opacity:.6;margin-left:2px">${p.en}</span>
+    </div>`
+  ).join("");
+}
+
+function selectPreset(el, idx) {
+  document.querySelectorAll(".preset-chip").forEach(c=>c.classList.remove("selected"));
+  el.classList.add("selected");
+  const p = PRESETS[idx];
+  document.getElementById("f-name-zh").value  = p.zh;
+  document.getElementById("f-name-en").value  = p.en;
+  document.getElementById("f-region").value   = p.region;
+  document.getElementById("f-products").value = p.products;
+  // style
+  selectedStyle = p.style;
+  document.querySelectorAll(".style-opt").forEach(o=>{
+    o.classList.toggle("selected", o.dataset.style===p.style);
+  });
+}
+
+function selectStyle(el) {
+  document.querySelectorAll(".style-opt").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  selectedStyle = el.dataset.style;
+  // deselect presets if manually changed
+  document.querySelectorAll(".preset-chip").forEach(c=>c.classList.remove("selected"));
+}
+
+function openModal() {
+  document.getElementById("modalOverlay").classList.add("open");
+  // Pre-fill with current brand
+  document.getElementById("f-name-zh").value  = currentBrand.zh;
+  document.getElementById("f-name-en").value  = currentBrand.en;
+  document.getElementById("f-region").value   = currentBrand.region||"";
+  document.getElementById("f-products").value = currentBrand.products||3;
+  selectedStyle = currentBrand.style||"light";
+  document.querySelectorAll(".style-opt").forEach(o=>{
+    o.classList.toggle("selected", o.dataset.style===selectedStyle);
+  });
+}
+function closeModal() { document.getElementById("modalOverlay").classList.remove("open"); }
+function handleOverlayClick(e) { if(e.target===document.getElementById("modalOverlay")) closeModal(); }
+
+function applyBrand() {
+  const zh       = document.getElementById("f-name-zh").value.trim() || "示範茶行";
+  const en       = document.getElementById("f-name-en").value.trim() || "";
+  const region   = document.getElementById("f-region").value.trim()  || "";
+  const products = parseInt(document.getElementById("f-products").value)||3;
+  const style    = selectedStyle;
+
+  currentBrand = { zh, en, region, products, style };
+  ALL_REVIEWS  = generateReviews(currentBrand);
+  currentProduct = "all";
+
+  // Update vendor bar
+  document.getElementById("vendorTitle").innerHTML =
+    `${zh}${en ? ` <span style="font-size:13px;color:var(--ink-muted);font-weight:400">${en}</span>` : ""}
+     <span class="brand-badge" onclick="openModal()">✏️ 切換品牌</span>`;
+  document.getElementById("vendorMeta").textContent =
+    `${region ? region+" &nbsp;·&nbsp; " : ""}共 ${products} 款茶品 &nbsp;·&nbsp; TasteJo 平台品評資料`;
+
+  // Rebuild product tabs
+  const tabs = document.getElementById("productTabs");
+  const prodNames = Array.from({length:products},(_,i)=>`${zh}・茶品 ${String.fromCharCode(65+i)}`);
+  tabs.innerHTML = `<button class="tab-btn active" onclick="switchProduct('all',this)">全部茶品</button>`
+    + prodNames.map(n=>`<button class="tab-btn" onclick="switchProduct('${n}',this)">${n}</button>`).join("");
+
+  // Reset charts
+  if(scatterChart){scatterChart.destroy();scatterChart=null;}
+  if(donutChart){donutChart.destroy();donutChart=null;}
+  if(trendChart){trendChart.destroy();trendChart=null;}
+
+  closeModal();
+  updateDashboard();
+}
+
+// ─────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────
+function getFiltered() {
+  const batch = document.getElementById("batchSelect").value;
+  const tribe = document.getElementById("tribeFilter").value;
+  return ALL_REVIEWS.filter(r=>{
+    if(currentProduct!=="all" && r.product!==currentProduct) return false;
+    if(batch!=="all" && r.batch!==batch) return false;
+    if(tribe!=="all" && r.tribe!==tribe) return false;
+    return true;
+  });
+}
+
+function updateDashboard() {
+  const reviews = getFiltered();
+  updateKPIs(reviews);
+  updateScatter(reviews);
+  updateDonut(reviews);
+  updateTrend(reviews);
+  updateInsights(reviews);
+  updateTribeBreakdown(reviews);
+  updateComments(reviews);
+}
+
+function updateKPIs(reviews) {
+  document.getElementById("kpi-count").textContent = reviews.length;
+  if(!reviews.length) return;
+  document.getElementById("kpi-sweet").textContent  = (reviews.reduce((s,r)=>s+r.sweet,0)/reviews.length).toFixed(1);
+  document.getElementById("kpi-mellow").textContent = (reviews.reduce((s,r)=>s+r.mellow,0)/reviews.length).toFixed(1);
+  const cnt={}; TRIBE_KEYS.forEach(k=>cnt[k]=0); reviews.forEach(r=>cnt[r.tribe]++);
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById("kpi-tribe").textContent = TRIBES[top[0]].emoji+" "+TRIBES[top[0]].label;
+  document.getElementById("kpi-tribe-sub").textContent = `佔 ${Math.round(top[1]/reviews.length*100)}% 品評`;
+}
+
+function updateScatter(reviews) {
+  const datasets = TRIBE_KEYS.map(tk=>({
+    label:TRIBES[tk].label,
+    data:reviews.filter(r=>r.tribe===tk).map(r=>({x:r.sweet,y:r.mellow,user:r.user})),
+    backgroundColor:TRIBES[tk].color+"99", borderColor:TRIBES[tk].color,
+    pointRadius:6, pointHoverRadius:9,
+  }));
+  document.getElementById("scatterLegend").innerHTML = TRIBE_KEYS.map(tk=>
+    `<div class="legend-chip"><div class="legend-dot" style="background:${TRIBES[tk].color}"></div>${TRIBES[tk].emoji} ${TRIBES[tk].label}</div>`
+  ).join("");
+  if(scatterChart){scatterChart.data.datasets=datasets;scatterChart.update("active");return;}
+  scatterChart=new Chart(document.getElementById("scatterChart").getContext("2d"),{
+    type:"scatter",data:{datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label(c){return[`  ${c.raw.user}`,`  甜感 ${c.parsed.x}  醇感 ${c.parsed.y}`];}}}},
+      scales:{x:{min:0,max:10,ticks:{stepSize:2,color:"#888"},grid:{color:"#f0f0f0"}},y:{min:0,max:10,ticks:{stepSize:2,color:"#888"},grid:{color:"#f0f0f0"}}},
+    },
+  });
+}
+
+function updateDonut(reviews) {
+  const cnt={}; TRIBE_KEYS.forEach(k=>cnt[k]=0); reviews.forEach(r=>cnt[r.tribe]++);
+  const data=TRIBE_KEYS.map(k=>cnt[k]), colors=TRIBE_KEYS.map(k=>TRIBES[k].color);
+  if(donutChart){donutChart.data.datasets[0].data=data;donutChart.update("active");return;}
+  donutChart=new Chart(document.getElementById("donutChart").getContext("2d"),{
+    type:"doughnut",
+    data:{labels:TRIBE_KEYS.map(k=>TRIBES[k].label),datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,cutout:"70%",plugins:{legend:{display:false},tooltip:{callbacks:{label(c){return` ${c.label}：${c.parsed} 次`;}}}}},
+  });
+}
+
+function updateTrend(reviews) {
+  const now=new Date();
+  const months=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-5+i,1);return{label:`${d.getMonth()+1}月`,year:d.getFullYear(),month:d.getMonth()};});
+  const cfg=STYLE_CONFIG[currentBrand.style];
+  const dataset={
+    label:currentBrand.zh,
+    data:months.map(m=>reviews.filter(r=>r.date.getFullYear()===m.year&&r.date.getMonth()===m.month).length),
+    borderColor:cfg.color, backgroundColor:cfg.color+"22", fill:true, tension:0.4, pointRadius:4,
+  };
+  document.getElementById("trendLegend").innerHTML=`<div class="legend-chip"><div class="legend-sq" style="background:${cfg.color}"></div>${currentBrand.zh}</div>`;
+  if(trendChart){trendChart.destroy();trendChart=null;}
+  trendChart=new Chart(document.getElementById("trendChart").getContext("2d"),{
+    type:"line",data:{labels:months.map(m=>m.label),datasets:[dataset]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{color:"#888",font:{size:11}}},y:{beginAtZero:true,grid:{color:"#f0f0f0"},ticks:{color:"#888",stepSize:3}}},
+    },
+  });
+}
+
+function updateTribeBreakdown(reviews) {
+  const cnt={}; TRIBE_KEYS.forEach(k=>cnt[k]=0); reviews.forEach(r=>cnt[r.tribe]++);
+  const total=reviews.length;
+  document.getElementById("tribeBreakdown").innerHTML = TRIBE_KEYS
+    .map(k=>({k,n:cnt[k]})).sort((a,b)=>b.n-a.n)
+    .map(({k,n})=>{const pct=total?Math.round(n/total*100):0;return`<li class="tribe-item"><span class="tribe-name-sm">${TRIBES[k].emoji} ${TRIBES[k].label.replace("族","")}</span><div class="tribe-bar-bg"><div class="tribe-bar-fill" style="width:${pct}%;background:${TRIBES[k].color}"></div></div><span class="tribe-pct">${pct}%</span></li>`;}).join("");
+}
+
+function updateInsights(reviews) {
+  if(!reviews.length){document.getElementById("insightList").innerHTML="<div class='insight-item'>資料不足</div>";return;}
+  const cnt={}; TRIBE_KEYS.forEach(k=>cnt[k]=0); reviews.forEach(r=>cnt[r.tribe]++);
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  const topT=TRIBES[top[0]], topPct=Math.round(top[1]/reviews.length*100);
+  const avgS=(reviews.reduce((s,r)=>s+r.sweet,0)/reviews.length).toFixed(1);
+  const avgM=(reviews.reduce((s,r)=>s+r.mellow,0)/reviews.length).toFixed(1);
+  const recent=reviews.filter(r=>(Date.now()-r.date.getTime())<30*86400000);
+  const trendStr=recent.length>reviews.length*0.12?"🔥 近期品評熱度持續上升":"📊 品評量穩定累積";
+  const styleLabel={light:"清香",roasted:"焙火醇厚",sweet:"甜香蜜韻",rich:"濃郁醇厚"}[currentBrand.style]||"";
+  document.getElementById("insightList").innerHTML=[
+    `<strong>${topT.emoji} ${topT.label}</strong> 是最主要受眾，佔 ${topPct}%`,
+    `${styleLabel}風格：平均甜感 <strong>${avgS}</strong>、醇感 <strong>${avgM}</strong>`,
+    `高 HP 用戶（品評熱愛者）可作為精準送樣目標`,
+    trendStr,
+  ].map(t=>`<div class="insight-item">${t}</div>`).join("");
+}
+
+function updateComments(reviews) {
+  const el=document.getElementById("commentsList");
+  if(!reviews.length){el.innerHTML=`<li style="color:var(--ink-muted);font-size:13px;text-align:center;padding:20px">此條件下暫無留言</li>`;return;}
+  el.innerHTML=reviews.slice(0,20).map(r=>{
+    const tribe=TRIBES[r.tribe];
+    const dateStr=r.date.toLocaleDateString("zh-TW",{month:"long",day:"numeric"});
+    return`<li class="comment-item" style="border-left:3px solid ${tribe.color}40">
+      <div class="comment-meta"><span class="comment-user">${r.user}</span><span class="comment-tribe-tag" style="background:${tribe.color}20;color:${tribe.color}">${tribe.emoji} ${tribe.label}</span></div>
+      <div class="comment-text">${r.comment}</div>
+      <div class="comment-footer"><span class="comment-score">甜 ${r.sweet} · 醇 ${r.mellow}</span><span class="comment-date">${dateStr}</span></div>
+    </li>`;
+  }).join("");
+}
+
+function switchProduct(prod,btn) {
+  currentProduct=prod;
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  if(trendChart){trendChart.destroy();trendChart=null;}
+  if(scatterChart){scatterChart.destroy();scatterChart=null;}
+  updateDashboard();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+buildPresets();
+ALL_REVIEWS = generateReviews(currentBrand);
+updateDashboard();
+</script>
+</body>
+</html>

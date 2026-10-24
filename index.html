@@ -268,6 +268,21 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25);}
 .result-emoji{font-size:2.6rem;transition:all .25s;}
 .result-cat{font-size:1.05rem;font-weight:800;color:var(--green);margin-bottom:4px;}
 .result-desc{font-size:.86rem;color:var(--muted);}
+/* 測驗結果 → 傳到 LINE */
+.quiz-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin-top:14px;padding:16px 20px;
+  border:1.5px dashed var(--green-mid);border-radius:var(--r-sm);
+}
+.quiz-cta-text{flex:1;min-width:220px;}
+.quiz-cta-text strong{display:block;font-size:.95rem;font-weight:800;margin-bottom:2px;}
+.quiz-cta-text span{font-size:.84rem;color:var(--muted);}
+.quiz-cta-text b{color:var(--green);font-weight:700;}
+.quiz-cta .btn-line{flex-shrink:0;}
+.quiz-cta.nudge .btn-line{animation:nudge .7s ease;}
+@keyframes nudge{0%,100%{transform:none;}35%{transform:translateY(-4px);}65%{transform:translateY(1px);}}
+@media(max-width:600px){.quiz-cta .btn-line{width:100%;justify-content:center;}}
+.collab-note{font-size:.72rem;color:var(--green);background:var(--green-lt);padding:2px 8px;border-radius:10px;margin-left:4px;}
 
 /* ─── HOLIM ─── */
 .holim-bg{background:linear-gradient(145deg,#0c5e42 0%,#1a9e72 60%,#22c487 100%);}
@@ -636,6 +651,14 @@ footer a{color:var(--muted);text-decoration:none;}
           <div class="result-desc" id="r-desc">中間值，追求協調、順口的風格。你對風味保持開放，什麼茶都能欣賞。</div>
         </div>
       </div>
+      <!-- 傳到 LINE：每個分類帶入固定文字，對應 TasteJo 官方帳號的關鍵字自動回應 -->
+      <div class="quiz-cta" id="quizCta">
+        <div class="quiz-cta-text">
+          <strong>把結果存到 LINE</strong>
+          <span>一鍵傳給 TasteJo 官方帳號，收下你的「<b id="cta-cat">平衡・順口系</b>」品味卡和入門茶款建議。</span>
+        </div>
+        <a id="quizLine" class="btn-line" href="https://line.me/R/ti/p/@828xqrmq" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.55 7.39 8.35 8.03.33.07.77.22.88.5.1.25.07.64.03.89l-.14.86c-.04.25-.2.99.87.54 1.07-.45 5.74-3.38 7.83-5.79C21.31 13.55 22 11.94 22 10.13 22 5.64 17.52 2 12 2zM8.28 12.4H6.35c-.28 0-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51s.51.23.51.51v3.34h1.42c.28 0 .51.23.51.51s-.23.52-.51.52zm2-.51c0 .28-.23.51-.51.51s-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51s.51.23.51.51v3.86zm4.65 0c0 .22-.14.42-.35.49-.05.02-.11.03-.16.03-.16 0-.31-.08-.41-.21l-1.98-2.7v2.39c0 .28-.23.51-.51.51s-.51-.23-.51-.51V8.03c0-.22.14-.42.35-.49.05-.02.11-.02.16-.02.16 0 .31.07.41.2l1.98 2.7V8.03c0-.28.23-.51.51-.51s.35.23.35.51v3.86zm3.28-2.44c.28 0 .51.23.51.51s-.23.51-.51.51h-1.42v.92h1.42c.28 0 .51.23.51.51s-.23.51-.51.51h-1.93c-.28 0-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51h1.93c.28 0 .51.23.51.51s-.23.51-.51.51h-1.42v.92h1.42z"/></svg>傳到 LINE</a>
+      </div>
     </div>
   </div>
 </section>
@@ -778,14 +801,19 @@ footer a{color:var(--muted);text-decoration:none;}
 <div class="collab-strip" id="collab">
   <div class="collab-inner">
     <div class="collab-text">我們也歡迎</div>
-    <a href="https://lin.ee/FeERHez" class="collab-link" target="_blank">
+    <a href="https://line.me/R/oaMessage/%40141xwjan/?%E6%88%91%E6%83%B3%E6%B4%BD%E8%A9%A2%EF%BC%9A%E5%85%A7%E5%AE%B9%E5%89%B5%E4%BD%9C%E8%80%85%E5%90%88%E4%BD%9C" class="collab-link" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 11.5 16 6.5"/><path d="M8 12.5 16 17.5"/></svg>
       內容創作者合作
     </a>
     <div class="collab-sep">·</div>
-    <a href="https://lin.ee/FeERHez" class="collab-link" target="_blank">
+    <a href="https://line.me/R/oaMessage/%40141xwjan/?%E6%88%91%E6%83%B3%E6%B4%BD%E8%A9%A2%EF%BC%9A%E8%8C%B6%E5%93%81%E7%89%8C%E4%B8%8A%E6%9E%B6" class="collab-link" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
-      茶品牌上架洽詢
+      茶品牌上架洽詢<span class="collab-note">免費上架・不抽成</span>
+    </a>
+    <div class="collab-sep">·</div>
+    <a href="demo.html" class="collab-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
+      看品牌數據 demo →
     </a>
   </div>
 </div>
@@ -793,7 +821,7 @@ footer a{color:var(--muted);text-decoration:none;}
 <!-- ── FOOTER ── -->
 <footer>
   <p>© 2025 <strong>TasteJo</strong>｜品味即對話，茶藝即陪伴</p>
-  <p style="margin-top:6px;">LINE ID: <a href="https://lin.ee/FeERHez" target="_blank">@803qexkg</a></p>
+  <p style="margin-top:6px;">LINE 官方帳號：<a href="https://line.me/R/ti/p/@828xqrmq" target="_blank" rel="noopener">@828xqrmq</a></p>
 </footer>
 
 <script>
@@ -828,15 +856,36 @@ function classify(s,m){
   return              {e:'⚖️',c:'平衡・順口系',  d:'中間值，追求協調順口的風格，對各種茶都能欣賞。'};
 }
 
+/* ── 傳到 LINE（TasteJo 官方帳號）──
+   帶入文字固定為「我的品味：<分類>」，共 5 種，
+   在 LINE 官方帳號後台設成關鍵字自動回應，就能回傳對應的品味卡。 */
+const TJ_OA    = '@828xqrmq';
+const quizCta  = document.getElementById('quizCta');
+const quizLine = document.getElementById('quizLine');
+const ctaCat   = document.getElementById('cta-cat');
+function oaMessage(id, text){
+  return 'https://line.me/R/oaMessage/' + encodeURIComponent(id) + '/?' + encodeURIComponent(text);
+}
+
 function update(){
   const s=+sweet.value, m=+mellow.value;
   svEl.textContent=s; mvEl.textContent=m;
   updateFill(sweet); updateFill(mellow);
   const r=classify(s,m);
   rEmoji.textContent=r.e; rCat.textContent=r.c; rDesc.textContent=r.d;
+  ctaCat.textContent=r.c;
+  quizLine.href=oaMessage(TJ_OA, '我的品味：' + r.c);
+}
+/* 第一次拖動滑桿後，輕輕提示一下按鈕 */
+let nudged=false;
+function nudgeOnce(){
+  if(nudged) return; nudged=true;
+  setTimeout(()=>quizCta.classList.add('nudge'), 600);
 }
 sweet.addEventListener('input', update);
 mellow.addEventListener('input', update);
+sweet.addEventListener('change', nudgeOnce);
+mellow.addEventListener('change', nudgeOnce);
 updateFill(sweet); updateFill(mellow);
 update();
 </script>

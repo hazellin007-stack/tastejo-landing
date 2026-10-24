@@ -170,6 +170,23 @@
     margin-left:12px; cursor:pointer;
   }
 
+  /* ── 真實數據 CTA ── */
+  .real-cta { margin:0 32px 32px; background:linear-gradient(135deg,#1f5e45 0%,var(--green) 60%,var(--green-light) 100%); color:#fff; border-radius:20px; padding:28px 32px; }
+  .real-cta-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .real-cta-tag { display:inline-block; font-size:11px; letter-spacing:.06em; background:rgba(255,255,255,.18); padding:3px 10px; border-radius:20px; margin-bottom:10px; }
+  .real-cta h2 { font-size:20px; font-weight:800; margin-bottom:6px; }
+  .real-cta p { font-size:13px; opacity:.88; max-width:560px; line-height:1.65; }
+  .btn-line-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#06C755; color:#fff; text-decoration:none; padding:13px 22px; border-radius:24px; font-size:15px; font-weight:700; box-shadow:0 4px 16px rgba(0,0,0,.18); white-space:nowrap; transition:opacity .2s; }
+  .btn-line-cta:hover { opacity:.92; }
+
+  /* ── 套用品牌後的提示列 ── */
+  .real-toast { position:fixed; left:32px; bottom:32px; z-index:350; max-width:min(520px, calc(100vw - 64px)); background:#1a1a1a; color:#fff; border-radius:16px; padding:12px 12px 12px 18px; display:flex; align-items:center; gap:12px; box-shadow:0 12px 32px rgba(0,0,0,.25); transform:translateY(160%); opacity:0; pointer-events:none; transition:transform .35s ease, opacity .35s ease; }
+  .real-toast.show { transform:none; opacity:1; pointer-events:auto; }
+  .real-toast-text { font-size:13px; line-height:1.5; flex:1; }
+  .real-toast-text b { color:#9fe0c0; font-weight:700; }
+  .real-toast a { background:#06C755; color:#fff; text-decoration:none; font-size:13px; font-weight:700; padding:8px 14px; border-radius:18px; white-space:nowrap; }
+  .real-toast-close { background:none; border:none; color:rgba(255,255,255,.55); font-size:20px; cursor:pointer; padding:0 4px; line-height:1; }
+
   footer { text-align:center; padding:24px; font-size:12px; color:var(--ink-muted); border-top:1px solid var(--border); }
   footer strong { color:var(--green); }
 
@@ -179,6 +196,9 @@
     header,.vendor-bar,.filters,.kpi-row,.main-grid { padding-left:16px; padding-right:16px; }
     .field-row { grid-template-columns:1fr; }
     .fab { bottom:20px; right:20px; }
+    .real-cta { margin:0 16px 24px; padding:24px 20px; }
+    .btn-line-cta { width:100%; }
+    .real-toast { left:16px; right:16px; bottom:84px; max-width:none; }
   }
 </style>
 </head>
@@ -285,7 +305,26 @@
   </div>
 </div>
 
+<!-- 真實數據 CTA：導向官方 LINE @141xwjan，帶入品牌資訊 -->
+<section class="real-cta">
+  <div class="real-cta-inner">
+    <div>
+      <span class="real-cta-tag">以上為模擬數據</span>
+      <h2 id="realCtaTitle">想看你家茶的真實數據嗎？</h2>
+      <p>上架 TasteJo 免費、不抽成。茶友的真實品評累積後，我們會整理成像這樣的消費者洞察報告給你。</p>
+    </div>
+    <a class="btn-line-cta" id="realCtaBtn" href="https://line.me/R/oaMessage/%40141xwjan/?%E7%94%B3%E8%AB%8B%E8%A9%A6%E5%81%9A%E5%A0%B1%E5%91%8A" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.55 7.39 8.35 8.03.33.07.77.22.88.5.1.25.07.64.03.89l-.14.86c-.04.25-.2.99.87.54 1.07-.45 5.74-3.38 7.83-5.79C21.31 13.55 22 11.94 22 10.13 22 5.64 17.52 2 12 2zM8.28 12.4H6.35c-.28 0-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51s.51.23.51.51v3.34h1.42c.28 0 .51.23.51.51s-.23.52-.51.52zm2-.51c0 .28-.23.51-.51.51s-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51s.51.23.51.51v3.86zm4.65 0c0 .22-.14.42-.35.49-.05.02-.11.03-.16.03-.16 0-.31-.08-.41-.21l-1.98-2.7v2.39c0 .28-.23.51-.51.51s-.51-.23-.51-.51V8.03c0-.22.14-.42.35-.49.05-.02.11-.02.16-.02.16 0 .31.07.41.2l1.98 2.7V8.03c0-.28.23-.51.51-.51s.35.23.35.51v3.86zm3.28-2.44c.28 0 .51.23.51.51s-.23.51-.51.51h-1.42v.92h1.42c.28 0 .51.23.51.51s-.23.51-.51.51h-1.93c-.28 0-.51-.23-.51-.51V8.03c0-.28.23-.51.51-.51h1.93c.28 0 .51.23.51.51s-.23.51-.51.51h-1.42v.92h1.42z"/></svg>申請免費試做報告</a>
+  </div>
+</section>
+
 <footer>Powered by <strong>TasteJo</strong> · 茶品評鑒平台 &nbsp;·&nbsp; 此頁面為品牌合作 Demo，資料為模擬示意</footer>
+
+<!-- 套用品牌後的提示列 -->
+<div class="real-toast" id="realToast" role="status" aria-live="polite">
+  <div class="real-toast-text" id="toastText"></div>
+  <a id="toastBtn" href="https://line.me/R/oaMessage/%40141xwjan/?%E7%94%B3%E8%AB%8B%E8%A9%A6%E5%81%9A%E5%A0%B1%E5%91%8A" target="_blank" rel="noopener">申請免費試做</a>
+  <button class="real-toast-close" onclick="hideToast()" aria-label="關閉">×</button>
+</div>
 
 <!-- FAB -->
 <button class="fab" onclick="openModal()">🏪 設定品牌</button>
@@ -509,7 +548,7 @@ function applyBrand() {
     `${zh}${en ? ` <span style="font-size:13px;color:var(--ink-muted);font-weight:400">${en}</span>` : ""}
      <span class="brand-badge" onclick="openModal()">✏️ 切換品牌</span>`;
   document.getElementById("vendorMeta").textContent =
-    `${region ? region+" &nbsp;·&nbsp; " : ""}共 ${products} 款茶品 &nbsp;·&nbsp; TasteJo 平台品評資料`;
+    `${region ? region+"  ·  " : ""}共 ${products} 款茶品  ·  TasteJo 平台品評資料`;
 
   // Rebuild product tabs
   const tabs = document.getElementById("productTabs");
@@ -523,8 +562,51 @@ function applyBrand() {
   if(trendChart){trendChart.destroy();trendChart=null;}
 
   closeModal();
+  updateRealCta();   // 先更新 CTA：就算圖表載入失敗，申請按鈕也照常可用
+  showToast();
   updateDashboard();
 }
+
+// ─────────────────────────────────────────────
+// 申請試做報告（導向官方 LINE @141xwjan）
+// 對方自己輸入的品牌資訊會帶進 LINE 訊息，送出前可再修改
+// ─────────────────────────────────────────────
+const BD_OA = "@141xwjan";
+const STYLE_NAMES = { light:"清香型", roasted:"焙火型", sweet:"甜香型", rich:"醇厚型" };
+function oaMessage(id, text) {
+  return "https://line.me/R/oaMessage/" + encodeURIComponent(id) + "/?" + encodeURIComponent(text);
+}
+function isOwnBrand(b) {
+  return b.zh && b.zh !== "示範茶行" && !PRESETS.some(p => p.zh === b.zh);
+}
+function updateRealCta() {
+  const b = currentBrand, own = isOwnBrand(b);
+  let msg = "申請試做報告";
+  if (own) {
+    msg += "｜品牌：" + b.zh + (b.en ? "（" + b.en + "）" : "");
+    if (b.region) msg += "｜產地：" + b.region;
+    if (STYLE_NAMES[b.style]) msg += "｜風格：" + STYLE_NAMES[b.style];
+    msg += "｜主力茶品 " + b.products + " 款";
+  }
+  const url = oaMessage(BD_OA, msg);
+  document.getElementById("realCtaBtn").href = url;
+  document.getElementById("toastBtn").href = url;
+  document.getElementById("realCtaTitle").textContent =
+    own ? `想看「${b.zh}」的真實數據嗎？` : "想看你家茶的真實數據嗎？";
+}
+function showToast() {
+  const t = document.getElementById("toastText");
+  t.textContent = "";
+  if (isOwnBrand(currentBrand)) {
+    t.append("這是「");
+    const b = document.createElement("b"); b.textContent = currentBrand.zh; t.append(b);
+    t.append("」的模擬儀表板。想看真實數據？");
+  } else {
+    t.append("這是示範品牌的模擬儀表板。想看你家茶的真實數據？");
+  }
+  document.getElementById("realToast").classList.add("show");
+}
+function hideToast() { document.getElementById("realToast").classList.remove("show"); }
 
 // ─────────────────────────────────────────────
 // DASHBOARD
@@ -666,6 +748,7 @@ function switchProduct(prod,btn) {
 // ─────────────────────────────────────────────
 buildPresets();
 ALL_REVIEWS = generateReviews(currentBrand);
+updateRealCta();
 updateDashboard();
 </script>
 </body>

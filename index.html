@@ -268,6 +268,8 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25);}
 .result-emoji{font-size:2.6rem;transition:all .25s;}
 .result-cat{font-size:1.05rem;font-weight:800;color:var(--green);margin-bottom:4px;}
 .result-desc{font-size:.86rem;color:var(--muted);}
+.result-style{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-bottom:8px;}
+.style-pill{display:inline-block;background:#fff;border:1px solid var(--green-mid);color:var(--green-dk);font-weight:700;padding:2px 10px;border-radius:12px;font-size:.8rem;}
 /* 測驗結果 → 傳到 LINE */
 .quiz-cta{
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -632,7 +634,7 @@ footer a{color:var(--muted);text-decoration:none;}
     <div class="demo-wrap fi">
       <div class="demo-head">
         <h3>試試看：你是哪種品味？</h3>
-        <p>拖動下方滑桿，看看你的味覺偏好屬於哪個分類。</p>
+        <p>拖動下方滑桿，看看你的味覺偏好屬於哪個分類——和 TasteJo App 用的是同一套分類。</p>
       </div>
       <div class="sliders">
         <div>
@@ -647,8 +649,9 @@ footer a{color:var(--muted);text-decoration:none;}
       <div class="demo-result">
         <div class="result-emoji" id="r-emoji">⚖️</div>
         <div>
-          <div class="result-cat" id="r-cat">平衡・順口系</div>
-          <div class="result-desc" id="r-desc">中間值，追求協調、順口的風格。你對風味保持開放，什麼茶都能欣賞。</div>
+          <div class="result-cat">偏好「<span id="r-cat">平衡・順口系</span>」</div>
+          <div class="result-style">風味風格<span class="style-pill" id="r-style">🍃 中段回甘派</span></div>
+          <div class="result-desc" id="r-desc">甘度與醇度都在中間，你追求協調、順口的風格。兩者接近，風味發展自然平衡，回甘適中。</div>
         </div>
       </div>
       <!-- 傳到 LINE：每個分類帶入固定文字，對應 TasteJo 官方帳號的關鍵字自動回應 -->
@@ -845,19 +848,36 @@ const svEl   = document.getElementById('sv');
 const mvEl   = document.getElementById('mv');
 const rEmoji = document.getElementById('r-emoji');
 const rCat   = document.getElementById('r-cat');
+const rStyle = document.getElementById('r-style');
 const rDesc  = document.getElementById('r-desc');
 
-function classify(s,m){
-  const hi=6, diff=s-m;
-  if(s>=hi&&m>=hi) return {e:'🌿',c:'鮮明・醇厚系',d:'甘度與醇度都偏高，你偏好鮮明有層次的風味，屬於「濃郁識趣族」！'};
-  if(s<hi&&m<hi)   return {e:'💧',c:'自然・舒爽系',d:'兩者都偏低，你追求茶的本質清香，是「清淡品賞族」！'};
-  if(diff>2)        return {e:'🍯',c:'初香奔放派',  d:'甘度顯著高於醇度，你偏好入口爆發的香氣與甜感！'};
-  if(diff<-2)       return {e:'🫖',c:'厚重回韻派',  d:'醇度明顯高於甘度，你講究濃郁滋味與深厚回韻。'};
-  return              {e:'⚖️',c:'平衡・順口系',  d:'中間值，追求協調順口的風格，對各種茶都能欣賞。'};
+/* 分類規則與 App 一致（ProfileSummaryView.swift 的 tasteCategory / flavorStyleLabel）
+   「系」看分數高低，「派」看甘度與醇度的差距。App 改規則時，這裡要一起改。 */
+const CATEGORIES = {
+  '鮮明・醇厚系': {e:'🌿', d:'甘度與醇度都偏高，你偏好鮮明、有層次的風味。'},
+  '平衡・順口系': {e:'⚖️', d:'甘度與醇度都在中間，你追求協調、順口的風格。'},
+  '自然・舒爽系': {e:'💧', d:'甘度與醇度都偏低，你偏好自然、舒爽的口感。'},
+  '風味多元系':   {e:'🌈', d:'你的偏好不落在單一區塊，品飲口味多樣而開放。'}
+};
+const STYLES = {
+  '初香奔放派': {e:'🍯', d:'甘度明顯高於醇度，偏好入口爆發的香氣與甜感。'},
+  '厚重回韻派': {e:'🫖', d:'醇度明顯高於甘度，講究濃郁滋味與深厚回韻。'},
+  '中段回甘派': {e:'🍃', d:'兩者接近，風味發展自然平衡，回甘適中。'}
+};
+function tasteCategory(s,m){
+  if(s>=6 && m>=6) return '鮮明・醇厚系';
+  if(s<4 && m<4)   return '自然・舒爽系';
+  if(s>=4 && s<6 && m>=4 && m<6) return '平衡・順口系';
+  return '風味多元系';
+}
+function flavorStyle(s,m){
+  if(s > m+1) return '初香奔放派';
+  if(m > s+1) return '厚重回韻派';
+  return '中段回甘派';
 }
 
 /* ── 傳到 LINE（TasteJo 官方帳號）──
-   帶入文字固定為「我的品味：<分類>」，共 5 種，
+   帶入文字固定為「我的品味：<系>」，共 4 種，
    在 LINE 官方帳號後台設成關鍵字自動回應，就能回傳對應的品味卡。 */
 const TJ_OA    = '@828xqrmq';
 const quizCta  = document.getElementById('quizCta');
@@ -871,10 +891,13 @@ function update(){
   const s=+sweet.value, m=+mellow.value;
   svEl.textContent=s; mvEl.textContent=m;
   updateFill(sweet); updateFill(mellow);
-  const r=classify(s,m);
-  rEmoji.textContent=r.e; rCat.textContent=r.c; rDesc.textContent=r.d;
-  ctaCat.textContent=r.c;
-  quizLine.href=oaMessage(TJ_OA, '我的品味：' + r.c);
+  const cat=tasteCategory(s,m), sty=flavorStyle(s,m);
+  rEmoji.textContent=CATEGORIES[cat].e;
+  rCat.textContent=cat;
+  rStyle.textContent=STYLES[sty].e + ' ' + sty;
+  rDesc.textContent=CATEGORIES[cat].d + STYLES[sty].d;
+  ctaCat.textContent=cat;
+  quizLine.href=oaMessage(TJ_OA, '我的品味：' + cat);
 }
 /* 第一次拖動滑桿後，輕輕提示一下按鈕 */
 let nudged=false;
